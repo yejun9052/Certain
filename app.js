@@ -480,6 +480,9 @@ function updateAccountUI() {
   const profileAction = document.querySelector('#profile-auth-action');
   const topAvatar = document.querySelector('#top-avatar');
   const profileAvatar = document.querySelector('#profile-avatar');
+  const headerGuestActions = document.querySelector('#header-guest-actions');
+  const headerUserActions = document.querySelector('#header-user-actions');
+  const headerUserName = document.querySelector('#header-user-name');
   if (profileName) profileName.textContent = user ? user.id : '게스트';
   if (profileStatus) profileStatus.textContent = user ? '학습 기록 저장 중' : '로그인하면 저장됨';
   if (profileAction) {
@@ -489,6 +492,9 @@ function updateAccountUI() {
   const initial = user ? user.id.slice(0, 1).toUpperCase() : 'G';
   if (topAvatar) topAvatar.textContent = initial;
   if (profileAvatar) profileAvatar.textContent = initial;
+  if (headerGuestActions) headerGuestActions.hidden = Boolean(user);
+  if (headerUserActions) headerUserActions.hidden = !user;
+  if (headerUserName) headerUserName.textContent = user ? `${user.id}님` : '';
 }
 
 function updateMockTimeLabels() {
@@ -911,7 +917,7 @@ document.addEventListener('click', (event) => {
   if (action === 'close-sidebar') closeSidebar();
   if (action === 'open-search') openSearch();
   if (action === 'close-search') closeSearch();
-  if (action === 'open-auth') openAuth('login');
+  if (action === 'open-auth') openAuth(actionElement.dataset.authMode || 'login');
   if (action === 'close-auth') closeAuth();
   if (action === 'toggle-auth-mode') { authMode = authMode === 'login' ? 'register' : 'login'; authForm?.reset(); updateAuthModal(); }
   if (action === 'logout') logout();
