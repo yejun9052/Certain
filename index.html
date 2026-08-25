@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080b10" />
+    <meta
+      name="description"
+      content="정보처리산업기사 필기 대비 학습 대시보드 CERTAIN"
+    />
+    <title>CERTAIN · 정보처리산업기사 필기</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="ambient ambient-one"></div>
+      <div class="ambient ambient-two"></div>
+
+      <aside class="sidebar" id="sidebar">
+        <div class="brand-lockup">
+          <div class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div>
+            <strong>정보처리산업기사</strong>
+            <span>필기 공부</span>
+          </div>
+          <button class="icon-button sidebar-close" data-action="close-sidebar" aria-label="메뉴 닫기">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+
+        <div class="sidebar-label">메뉴</div>
+        <nav class="main-nav" aria-label="주 메뉴">
+          <button class="nav-item is-active" data-route="dashboard">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4v9Zm10 7h6v-9h-6v9ZM4 20h6v-3H4v3Zm10-12h6V4h-6v4Z" /></svg>
+            <span>대시보드</span>
+          </button>
+          <button class="nav-item" data-route="learn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16ZM4 5.5v16M7 7h9M7 11h9M7 15h5" /></svg>
+            <span>단원 학습</span>
+            <em>9</em>
+          </button>
+          <button class="nav-item" data-route="practice">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Zm3 4h8M8 12h2m2 0h2m2 0h2M8 16h2m2 0h2" /></svg>
+            <span>문제 풀기</span>
+          </button>
+          <button class="nav-item" data-route="mock">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.2 4.45 4.9.71-3.55 3.46.84 4.88L12 14.2l-4.39 2.3.84-4.88L4.9 8.16l4.9-.71L12 3Z" /><path d="M5 20h14" /></svg>
+            <span>모의고사 풀기</span>
+            <em class="nav-new">NEW</em>
+          </button>
+          <button class="nav-item" data-route="notes">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5" /></svg>
+            <span>단원별 틀린 문제</span>
+          </button>
+          <button class="nav-item" data-route="pdf">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h8l4 4V20.5H6z" /><path d="M14 3.5v4h4M8.5 12h7M8.5 15.5h5" /></svg>
+            <span>교재 원본 PDF</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-label">바로가기</div>
+        <button class="resume-card" data-action="resume-practice">
+          <div class="resume-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 10 7-10 7V5Z" /></svg>
+          </div>
+          <div>
+            <strong>이어서 풀기</strong>
+            <span>마지막 문제로 돌아가기</span>
+          </div>
+          <svg class="resume-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </button>
+
+        <div class="profile-card" id="profile-card">
+          <div class="avatar" id="profile-avatar">G</div>
+          <div class="profile-copy"><strong id="profile-name">게스트</strong><span id="profile-status">로그인하면 저장됨</span></div>
+          <div class="profile-actions"><button class="reset-link" data-action="reset-state">초기화</button><button class="reset-link" id="profile-auth-action" data-action="open-auth">로그인</button></div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <button class="icon-button menu-toggle" data-action="open-sidebar" aria-label="메뉴 열기">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+          </button>
+          <div class="breadcrumbs" id="breadcrumbs"><span>학습 공간</span><b>/</b><strong>대시보드</strong></div>
+          <div class="topbar-actions">
+            <button class="search-trigger" data-action="open-search" aria-label="검색 열기">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg>
+              <span>개념이나 문제 검색</span><kbd>⌘ K</kbd>
+            </button>
+            <button class="icon-button notification-button" aria-label="알림">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" /></svg>
+              <i></i>
+            </button>
+            <div class="top-avatar" id="top-avatar">G</div>
+          </div>
+        </header>
+
+        <div class="page-content" id="app" aria-live="polite"></div>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+    <div class="search-modal" id="search-modal" aria-hidden="true">
+      <div class="search-backdrop" data-action="close-search"></div>
+      <div class="search-panel" role="dialog" aria-modal="true" aria-label="학습 검색">
+        <div class="search-panel-head">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg>
+          <input id="global-search" type="search" placeholder="단원, 개념, 문제를 검색하세요" autocomplete="off" />
+          <button class="icon-button" data-action="close-search" aria-label="검색 닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
+        </div>
+        <div class="search-results" id="search-results"></div>
+      </div>
+    </div>
+
+    <div class="auth-modal" id="auth-modal" aria-hidden="true">
+      <div class="auth-backdrop" data-action="close-auth"></div>
+      <section class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <button class="icon-button auth-close" data-action="close-auth" aria-label="인증 창 닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
+        <div class="eyebrow">ACCOUNT</div>
+        <h2 id="auth-title">로그인</h2>
+        <p id="auth-description">로그인하면 학습 기록이 이 계정에 저장돼요.</p>
+        <form id="auth-form">
+          <label class="auth-field"><span>아이디</span><input id="auth-id" name="id" autocomplete="username" placeholder="예: a" required /></label>
+          <label class="auth-field"><span>비밀번호</span><input id="auth-password" name="password" type="password" autocomplete="current-password" placeholder="4자 이상" required /></label>
+          <label class="auth-field" id="auth-password-confirm-field" hidden><span>비밀번호 확인</span><input id="auth-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" placeholder="비밀번호를 한 번 더 입력" /></label>
+          <p class="auth-message" id="auth-message" role="status"></p>
+          <button class="button button-primary auth-submit" id="auth-submit" type="submit">로그인</button>
+        </form>
+        <button class="auth-switch" id="auth-switch" data-action="toggle-auth-mode">처음이에요 · 회원가입</button>
+        <small class="auth-note">이 버전은 브라우저 안에만 계정을 저장하는 학습용 방식이에요.</small>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
