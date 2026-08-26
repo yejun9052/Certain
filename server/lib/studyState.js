@@ -4,7 +4,7 @@
  * 학습 상태 저장소.
  *
  * 프론트엔드가 쓰는 모양은 그대로 유지한다:
- *   { bookmarked: string[], history: {[qid]: boolean}, wrongIds: string[], resumeQuestionId: string }
+ *   { bookmarked: string[], history: {[qid]: boolean}, wrongIds: string[], resumeQuestionId: string|null }
  *
  * 이 형태를 고정한 덕분에 app.js 의 applyStudyState/renderPractice/renderNotes 등
  * 렌더링 코드는 수정 없이 그대로 동작한다.
@@ -15,7 +15,7 @@
 const { getDb, nowIso, withImmediateTransaction } = require('../db');
 const content = require('./content');
 
-/** 사용자 생성 직후 호출. study_progress 기본 행을 만든다. */
+/** 사용자 생성 직후 호출. 이어풀기 위치가 없는 진행 행을 만든다. */
 function ensureProgress(conn, userId, at = nowIso()) {
   conn
     .prepare(
@@ -23,10 +23,10 @@ function ensureProgress(conn, userId, at = nowIso()) {
        VALUES (?, ?, ?)
        ON CONFLICT (user_id) DO NOTHING`
     )
-    .run(userId, content.defaultResumeQuestionId(), at);
+    .run(userId, null, at);
 }
 
-/** @returns {{bookmarked:string[], history:Record<string,boolean>, wrongIds:string[], resumeQuestionId:string}} */
+/** @returns {{bookmarked:string[], history:Record<string,boolean>, wrongIds:string[], resumeQuestionId:string|null}} */
 function getState(userId) {
   const db = getDb();
 
@@ -59,7 +59,7 @@ function getState(userId) {
     bookmarked,
     history,
     wrongIds,
-    resumeQuestionId: (progress && progress.resume_question_id) || content.defaultResumeQuestionId()
+    resumeQuestionId: progress ? progress.resume_question_id : null
   };
 }
 
@@ -157,7 +157,7 @@ function replaceState(userId, state) {
   const resumeQuestionId =
     state.resumeQuestionId && content.hasQuestion(state.resumeQuestionId)
       ? state.resumeQuestionId
-      : content.defaultResumeQuestionId();
+      : null;
 
   const now = Date.now();
   const at = new Date(now).toISOString();
@@ -223,7 +223,7 @@ function resetState(userId) {
     conn.prepare('DELETE FROM wrong_questions WHERE user_id = ?').run(userId);
     conn
       .prepare('UPDATE study_progress SET resume_question_id = ?, updated_at = ? WHERE user_id = ?')
-      .run(content.defaultResumeQuestionId(), at, userId);
+      .run(null, at, userId);
     return true;
   });
 }
@@ -306,7 +306,10 @@ function importLocalState(userId, state) {
       const current = conn
         .prepare('SELECT resume_question_id FROM study_progress WHERE user_id = ?')
         .get(userId);
-      const isDefault = !current || current.resume_question_id === content.defaultResumeQuestionId();
+      const isDefault =
+        !current ||
+        current.resume_question_id === null ||
+        current.resume_question_id === content.defaultResumeQuestionId();
       if (activity.count === historyEntries.length && isDefault) {
         conn
           .prepare('UPDATE study_progress SET resume_question_id = ?, updated_at = ? WHERE user_id = ?')

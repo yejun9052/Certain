@@ -219,7 +219,7 @@ test('로그인 후 콘텐츠·PDF·학습 상태에 접근할 수 있다', asyn
   assert.equal(state.status, 200);
   assert.deepEqual(state.body.data.bookmarked, []);
   assert.deepEqual(state.body.data.wrongIds, []);
-  assert.equal(state.body.data.resumeQuestionId, 'q-01');
+  assert.equal(state.body.data.resumeQuestionId, null);
 });
 
 test('채점은 서버가 하고 오답이 기록된다', async () => {
@@ -312,6 +312,7 @@ test('초기화는 학습 데이터만 비운다', async () => {
   assert.deepEqual(res.body.data.bookmarked, []);
   assert.deepEqual(res.body.data.wrongIds, []);
   assert.deepEqual(res.body.data.history, {});
+  assert.equal(res.body.data.resumeQuestionId, null);
 
   const me = await client.get('/api/auth/me');
   assert.equal(me.body.data.authenticated, true);

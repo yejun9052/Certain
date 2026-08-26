@@ -22,7 +22,7 @@
 | `sessions` | SHA-256 세션 토큰, 사용자, 만료 시각 |
 | `units` | 콘텐츠 단원 카탈로그 |
 | `question_catalog` | 문제 ID·단원·문제 종류(practice/mock/ai) |
-| `study_progress` | 사용자별 이어서 풀기 위치 |
+| `study_progress` | 사용자가 실제로 저장한 이어서 풀기 위치(없으면 `NULL`) |
 | `bookmarks` | 사용자별 북마크 |
 | `question_attempts` | 문제별 최신 정답 여부와 누적 풀이 통계 |
 | `wrong_questions` | 사용자별 오답 문제와 오답 횟수 |

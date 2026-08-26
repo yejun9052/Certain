@@ -131,7 +131,7 @@ function isAuthenticated() { return Boolean(session); }
 function isAdmin() { return Boolean(session && session.role === 'admin'); }
 
 function emptyStudyState() {
-  return { bookmarked: [], history: {}, wrongIds: [], resumeQuestionId: 'q-01' };
+  return { bookmarked: [], history: {}, wrongIds: [], resumeQuestionId: null };
 }
 
 function normalizeStudyState(source = {}) {
@@ -140,7 +140,7 @@ function normalizeStudyState(source = {}) {
     bookmarked: Array.isArray(source.bookmarked) ? [...new Set(source.bookmarked)] : [],
     history: { ...history },
     wrongIds: Array.isArray(source.wrongIds) ? [...new Set(source.wrongIds)] : [],
-    resumeQuestionId: typeof source.resumeQuestionId === 'string' ? source.resumeQuestionId : 'q-01'
+    resumeQuestionId: typeof source.resumeQuestionId === 'string' && source.resumeQuestionId.length > 0 ? source.resumeQuestionId : null
   };
 }
 
@@ -250,6 +250,32 @@ const EMPTY_UNIT = { id: '', number: '00', title: '', code: '', description: '',
 function getUnit(id) { return units.find((unit) => unit.id === id) || units[0] || EMPTY_UNIT; }
 function getQuestion(id) { return questionBank.find((question) => question.id === id); }
 function getAiQuestion(id) { return aiMockQuestions.find((question) => question.id === id); }
+
+function getResumeQuestion() {
+  return state.resumeQuestionId ? getQuestion(state.resumeQuestionId) : null;
+}
+
+function updateResumeCard() {
+  const card = document.querySelector('.resume-card');
+  if (!card) return;
+
+  const question = getResumeQuestion();
+  const available = Boolean(question);
+  const questionIndex = available ? questionBank.findIndex((item) => item.id === question.id) : -1;
+  const title = card.querySelector('[data-resume-title]');
+  const detail = card.querySelector('[data-resume-detail]');
+
+  if (title) title.textContent = available ? '이어서 풀기' : '저장된 이어풀기 없음';
+  if (detail) {
+    detail.textContent = available
+      ? `${String(questionIndex + 1).padStart(2, '0')}번 · ${getUnit(question.unit).title}`
+      : '문제를 풀면 저장 위치가 여기에 표시돼요.';
+  }
+  card.disabled = !available;
+  card.classList.toggle('is-disabled', !available);
+  card.setAttribute('aria-disabled', String(!available));
+  card.setAttribute('aria-label', available ? `${questionIndex + 1}번 문제 이어풀기` : '저장된 이어풀기 없음');
+}
 
 function shuffleQuestions(list) {
   const shuffled = [...list];
@@ -544,7 +570,12 @@ function startExamTimer() {
 }
 
 function resumePractice() {
-  const questionIndex = questionBank.findIndex((question) => question.id === state.resumeQuestionId);
+  const resumeQuestion = getResumeQuestion();
+  if (!resumeQuestion) {
+    showToast('저장된 이어풀기 문제가 없어요. 먼저 문제를 하나 풀어주세요.');
+    return;
+  }
+  const questionIndex = questionBank.findIndex((question) => question.id === resumeQuestion.id);
   state.practiceFilter = 'all';
   state.practiceUnit = null;
   state.practiceIndex = questionIndex >= 0 ? questionIndex : 0;
@@ -615,6 +646,7 @@ function updateNav() {
 
 function render() {
   updateAccountUI();
+  updateResumeCard();
 
   // 게이트: 로그인하지 않았거나 콘텐츠를 아직 못 받았으면 공부 화면을 그리지 않는다.
   if (!isAuthenticated() || !contentLoaded) {
@@ -651,8 +683,10 @@ function renderPdfViewer() {
 }
 
 function renderDashboard() {
-  const resumeQuestion = getQuestion(state.resumeQuestionId) || questionBank[0];
-  const resumeUnit = getUnit(resumeQuestion.unit);
+  const resumeQuestion = getResumeQuestion();
+  const resumeUnit = resumeQuestion ? getUnit(resumeQuestion.unit) : null;
+  const resumeIndex = resumeQuestion ? questionBank.findIndex((item) => item.id === resumeQuestion.id) : -1;
+  const resumeNumber = resumeIndex >= 0 ? String(resumeIndex + 1).padStart(2, '0') : '—';
   return `
     <div class="stack-gap">
       <section class="hero">
@@ -661,14 +695,14 @@ function renderDashboard() {
           <h1>오늘 공부할 내용을<br /><span>골라보세요.</span></h1>
           <p>개념을 읽거나 문제를 풀면서 정보처리산업기사 필기 내용을 차근차근 정리해보세요.</p>
           <div class="hero-actions">
-            <button class="button button-primary" data-action="resume-practice">이어서 풀기 ${icons.arrow}</button>
+            ${resumeQuestion ? `<button class="button button-primary" data-action="resume-practice">이어서 풀기 ${icons.arrow}</button>` : '<button class="button button-secondary" disabled>저장된 이어풀기 없음</button>'}
             <button class="button button-secondary" data-action="go-mock">모의고사 풀기 ${icons.play}</button>
           </div>
         </div>
       </section>
 
       <section class="stats-grid">
-        <article class="stat-card stat-card-action" data-action="resume-practice"><div class="stat-top"><span>이어서 풀기</span><span class="stat-icon">${icons.play}</span></div><div class="stat-value"><strong>${String(questionBank.findIndex((item) => item.id === resumeQuestion.id) + 1).padStart(2, '0')}</strong><span>번 문제</span></div><div class="stat-trend">${resumeUnit.title}</div></article>
+        <article class="stat-card ${resumeQuestion ? 'stat-card-action' : 'is-disabled'}" ${resumeQuestion ? 'data-action="resume-practice"' : ''}><div class="stat-top"><span>이어서 풀기</span><span class="stat-icon">${icons.play}</span></div><div class="stat-value"><strong>${resumeNumber}</strong><span>${resumeQuestion ? '번 문제' : '저장 없음'}</span></div><div class="stat-trend">${resumeQuestion ? resumeUnit.title : '문제를 풀면 위치가 저장돼요'}</div></article>
         <article class="stat-card"><div class="stat-top"><span>오답노트</span><span class="stat-icon">${icons.rotate}</span></div><div class="stat-value"><strong>${state.wrongIds.length}</strong><span>문제</span></div><div class="stat-trend">다시 확인할 문제</div></article>
         <article class="stat-card"><div class="stat-top"><span>북마크</span><span class="stat-icon">${icons.bookmark}</span></div><div class="stat-value"><strong>${state.bookmarked.length}</strong><span>문제</span></div><div class="stat-trend">저장해둔 문제</div></article>
       </section>
@@ -689,12 +723,12 @@ function renderDashboard() {
         </div>
         <div class="panel panel-padding recent-panel">
           <div class="section-heading"><div><h2>최근 학습</h2><p>마지막으로 보던 곳에서 이어가세요.</p></div><button class="text-button" data-action="reset-state">초기화</button></div>
-          <button class="recent-row" data-action="resume-practice"><span class="recent-row-icon">${icons.play}</span><span><strong>${resumeQuestion.question}</strong><small>${resumeUnit.title} · 교재 p.${resumeQuestion.sourcePage}</small></span><span class="recent-row-arrow">${icons.arrow}</span></button>
+          ${resumeQuestion ? `<button class="recent-row" data-action="resume-practice"><span class="recent-row-icon">${icons.play}</span><span><strong>${resumeQuestion.question}</strong><small>${resumeUnit.title} · 교재 p.${resumeQuestion.sourcePage}</small></span><span class="recent-row-arrow">${icons.arrow}</span></button>` : `<div class="recent-row is-empty"><span class="recent-row-icon">${icons.play}</span><span><strong>저장된 이어풀기 없음</strong><small>문제를 선택하면 마지막 위치가 여기에 표시돼요.</small></span></div>`}
           <button class="recent-row" data-action="go-learn"><span class="recent-row-icon blue">${icons.book}</span><span><strong>단원 목록에서 다시 고르기</strong><small>9개 필수 능력단위 · 개념부터 학습</small></span><span class="recent-row-arrow">${icons.arrow}</span></button>
         </div>
       </section>
 
-      <button class="review-card" data-action="resume-practice"><div><div class="review-label">RESUME YOUR SESSION · ${String(questionBank.findIndex((item) => item.id === resumeQuestion.id) + 1).padStart(2, '0')}</div><h3>마지막으로 풀던 문제부터 이어갈까요?</h3><p>${resumeQuestion.question}</p></div><span class="review-arrow">${icons.arrow}</span></button>
+      ${resumeQuestion ? `<button class="review-card" data-action="resume-practice"><div><div class="review-label">RESUME YOUR SESSION · ${resumeNumber}</div><h3>마지막으로 풀던 문제부터 이어갈까요?</h3><p>${resumeQuestion.question}</p></div><span class="review-arrow">${icons.arrow}</span></button>` : `<div class="review-card is-empty"><div><div class="review-label">RESUME YOUR SESSION</div><h3>저장된 이어풀기가 아직 없어요.</h3><p>문제를 풀거나 문제 목록에서 위치를 선택하면 다음에 바로 이어갈 수 있어요.</p></div></div>`}
     </div>`;
 }
 

@@ -85,10 +85,14 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
 
 .resume-card { display: flex; align-items: center; gap: 9px; width: 100%; margin: 0 3px; padding: 10px 8px; color: var(--text); border: 1px solid rgba(215, 255, 98, .16); border-radius: 13px; background: rgba(215, 255, 98, .045); text-align: left; transition: .2s ease; }
 .resume-card:hover { border-color: rgba(215, 255, 98, .35); background: rgba(215, 255, 98, .09); transform: translateY(-1px); }
+.resume-card.is-disabled, .resume-card:disabled { cursor: default; border-color: var(--line); background: rgba(255,255,255,.018); opacity: .68; transform: none; }
+.resume-card.is-disabled:hover, .resume-card:disabled:hover { border-color: var(--line); background: rgba(255,255,255,.018); transform: none; }
+.resume-card.is-disabled .resume-icon, .resume-card:disabled .resume-icon { color: var(--muted); background: var(--panel-light); }
+.resume-card.is-disabled .resume-arrow, .resume-card:disabled .resume-arrow { color: var(--muted); }
 .resume-icon { display: grid; flex: 0 0 27px; place-items: center; width: 27px; height: 27px; color: #11160c; border-radius: 8px; background: var(--lime); }
 .resume-icon svg { width: 13px; height: 13px; }
 .resume-card strong { display: block; font-size: 11px; }
-.resume-card span:not(.resume-icon) { display: block; margin-top: 4px; color: var(--muted); font-size: 9px; }
+.resume-card span:not(.resume-icon) { display: block; max-width: 142px; margin-top: 4px; overflow: hidden; color: var(--muted); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
 .resume-arrow { width: 14px; height: 14px; margin-left: auto; color: var(--lime); }
 .streak-card { display: flex; align-items: center; gap: 9px; margin: 0 3px; padding: 10px 8px; border: 1px solid rgba(255, 182, 108, .14); border-radius: 13px; background: rgba(255, 182, 108, .045); }
 .streak-icon { display: grid; flex: 0 0 27px; place-items: center; width: 27px; height: 27px; color: var(--orange); border-radius: 8px; background: rgba(255, 182, 108, .13); font-size: 14px; }
@@ -182,6 +186,8 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
 .stat-trend { margin-top: 4px; color: var(--green); font-size: 9px; }
 .stat-card-action { cursor: pointer; }
 .stat-card-action:hover { border-color: rgba(215,255,98,.3); background: rgba(215,255,98,.045); }
+.stat-card.is-disabled { cursor: default; opacity: .68; }
+.stat-card.is-disabled:hover { border-color: var(--line); background: rgba(17,24,33,.76); }
 
 .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .quick-card { display: flex; align-items: flex-start; gap: 13px; min-height: 108px; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: rgba(17,24,33,.68); text-align: left; transition: .2s ease; }
@@ -225,6 +231,9 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
 .recent-panel { min-height: 100%; }
 .recent-row { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 65px; padding: 10px 0; border-top: 1px solid var(--line); background: transparent; text-align: left; }
 .recent-row:hover strong, .recent-row:hover .recent-row-arrow { color: var(--lime); }
+.recent-row.is-empty { cursor: default; }
+.recent-row.is-empty:hover strong { color: var(--text); }
+.recent-row.is-empty .recent-row-icon { color: var(--muted); background: var(--panel-light); }
 .recent-row-icon { display: grid; flex: 0 0 30px; place-items: center; width: 30px; height: 30px; color: #11160c; border-radius: 8px; background: var(--lime); }
 .recent-row-icon.blue { color: var(--blue); background: var(--blue-soft); }
 .recent-row-icon svg { width: 14px; height: 14px; }
@@ -234,6 +243,8 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
 .recent-row-arrow { width: 14px; height: 14px; color: #687587; transition: .2s ease; }
 
 .review-card { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 20px; padding: 20px 22px; border: 1px solid rgba(215,255,98,.18); border-radius: var(--radius); background: linear-gradient(100deg, rgba(215,255,98,.075), rgba(17,24,33,.75) 55%); }
+.review-card.is-empty { border-color: var(--line); background: rgba(255,255,255,.018); }
+.review-card.is-empty .review-label { color: var(--muted); }
 .review-card .review-label { color: var(--lime); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
 .review-card h3 { margin: 9px 0 5px; font-size: 15px; }
 .review-card p { margin: 0; color: var(--muted); font-size: 10px; }
@@ -334,9 +345,9 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
 .question-meta .question-tag { padding: 5px 7px; color: var(--blue); border: 1px solid rgba(124,156,255,.18); border-radius: 6px; background: var(--blue-soft); }
 .question-line { display: flex; align-items: center; gap: 10px; margin-top: 19px; }
 .question-line .line { height: 1px; flex: 1; background: var(--line); }
-.question-title { max-width: 700px; margin: 38px 0 28px; font-size: clamp(18px, 2vw, 24px); line-height: 1.55; letter-spacing: -.05em; }
-.choices { display: grid; gap: 9px; max-width: 710px; }
-.choice { display: flex; align-items: center; gap: 13px; min-height: 53px; padding: 0 15px; color: var(--muted-light); border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.018); text-align: left; font-size: 12px; transition: .2s ease; }
+.question-title { max-width: 700px; margin: 32px 0 24px; font-size: clamp(18px, 1.85vw, 23px); line-height: 1.48; letter-spacing: -.05em; }
+.choices { display: grid; gap: 8px; max-width: 710px; }
+.choice { display: flex; align-items: center; gap: 13px; min-height: 51px; padding: 0 15px; color: var(--muted-light); border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.018); text-align: left; font-size: 12px; transition: .2s ease; }
 .choice:hover { color: var(--text); border-color: rgba(215,255,98,.28); background: rgba(215,255,98,.045); }
 .choice-number { display: grid; place-items: center; flex: 0 0 24px; width: 24px; height: 24px; color: #8390a0; border: 1px solid var(--line-strong); border-radius: 50%; font-size: 10px; }
 .choice.is-selected { color: var(--text); border-color: var(--lime); background: var(--lime-soft); }
@@ -780,10 +791,10 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
 .study-article h2 { font-size: 21px; }
 .study-outline, .question-side, .exam-side { padding: 22px 0 22px 28px; border-left: 1px solid var(--line); }
 .question-card, .exam-question-card { min-height: calc(100vh - 184px); }
-.question-title { max-width: 1100px; margin: 45px 0 32px; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.5; }
-.choices { max-width: 1080px; gap: 12px; }
-.choice { min-height: 66px; padding: 0 19px; border-radius: 6px; font-size: 14px; }
-.choice-number { flex-basis: 28px; width: 28px; height: 28px; font-size: 11px; }
+.question-title { max-width: 1100px; margin: 35px 0 24px; font-size: clamp(22px, 2.1vw, 30px); line-height: 1.42; }
+.choices { max-width: 1080px; gap: 9px; }
+.choice { min-height: 54px; padding: 0 16px; border-radius: 6px; font-size: 14px; }
+.choice-number { flex-basis: 26px; width: 26px; height: 26px; font-size: 11px; }
 
 .all-unit-panel { padding: 0; }
 .all-unit-grid { gap: 14px; }
@@ -846,8 +857,8 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
   .hero p { font-size: 12px; }
   .page-title { font-size: 30px; }
   .learn-detail, .study-article, .question-card, .exam-question-card { padding: 23px 18px; }
-  .question-title { margin-top: 30px; font-size: 21px; }
-  .choice { min-height: 58px; padding: 0 14px; font-size: 13px; }
+  .question-title { margin: 28px 0 21px; font-size: 19px; }
+  .choice { min-height: 52px; padding: 0 14px; font-size: 13px; }
   .mock-card { min-height: 210px; padding: 21px; }
 }
 

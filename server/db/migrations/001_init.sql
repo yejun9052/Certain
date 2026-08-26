@@ -84,7 +84,7 @@ CREATE INDEX ix_catalog_unit ON question_catalog (unit_id, kind) WHERE active = 
 -- resumeQuestionId (사용자당 1행)
 CREATE TABLE study_progress (
   user_id            INTEGER PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
-  resume_question_id TEXT NOT NULL DEFAULT 'q-01'
+  resume_question_id TEXT
                           REFERENCES question_catalog (question_id) ON DELETE RESTRICT,
   updated_at         TEXT NOT NULL
 );
