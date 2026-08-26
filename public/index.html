@@ -11,7 +11,8 @@
     <title>CERTAIN · 정보처리산업기사 필기</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <!-- 부팅 전에는 잠근 상태로 시작한다. /api/auth/me 응답을 받은 뒤에만 풀린다. -->
+  <body class="is-locked">
     <div class="app-shell">
       <div class="ambient ambient-one"></div>
       <div class="ambient ambient-two"></div>
@@ -58,6 +59,11 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h8l4 4V20.5H6z" /><path d="M14 3.5v4h4M8.5 12h7M8.5 15.5h5" /></svg>
             <span>교재 원본 PDF</span>
           </button>
+          <button class="nav-item" data-route="admin" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" /></svg>
+            <span>계정 관리</span>
+            <em class="nav-admin">ADMIN</em>
+          </button>
         </nav>
 
         <div class="sidebar-divider"></div>
@@ -74,8 +80,12 @@
         </button>
 
         <div class="profile-card" id="profile-card">
-          <div class="avatar" id="profile-avatar">G</div>
-          <div class="profile-copy"><strong id="profile-name">게스트</strong><span id="profile-status">로그인하면 저장됨</span></div>
+          <div class="avatar" id="profile-avatar">?</div>
+          <div class="profile-copy">
+            <strong id="profile-name">로그인 필요</strong>
+            <span id="profile-status">로그인해야 이용할 수 있어요</span>
+            <span class="role-badge" id="profile-role" hidden></span>
+          </div>
           <div class="profile-actions"><button class="reset-link" data-action="reset-state">초기화</button><button class="reset-link" id="profile-auth-action" data-action="open-auth">로그인</button></div>
         </div>
       </aside>
@@ -98,6 +108,7 @@
               </div>
               <div class="header-auth-group" id="header-user-actions" hidden>
                 <span class="header-user-label" id="header-user-name"></span>
+                <span class="role-badge" id="header-user-role" hidden></span>
                 <button class="header-auth-button is-logout" data-action="logout">로그아웃</button>
               </div>
             </div>
@@ -105,12 +116,23 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" /></svg>
               <i></i>
             </button>
-            <div class="top-avatar" id="top-avatar">G</div>
+            <div class="top-avatar" id="top-avatar">?</div>
           </div>
         </header>
 
         <div class="page-content" id="app" aria-live="polite"></div>
       </main>
+    </div>
+
+    <div class="legacy-import" id="legacy-import" role="status" hidden>
+      <div class="legacy-import-copy">
+        <strong>예전 학습 기록 가져오기</strong>
+        <span id="legacy-import-text"></span>
+      </div>
+      <div class="legacy-import-actions">
+        <button class="button button-secondary" data-action="dismiss-legacy">나중에</button>
+        <button class="button button-primary" data-action="import-legacy">가져오기</button>
+      </div>
     </div>
 
     <div class="toast" id="toast" role="status"></div>
@@ -130,9 +152,14 @@
       <div class="auth-backdrop" data-action="close-auth"></div>
       <section class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="auth-title">
         <button class="icon-button auth-close" data-action="close-auth" aria-label="인증 창 닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
+        <div class="brand-lockup auth-brand">
+          <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div><strong>정보처리산업기사</strong><span>필기 공부</span></div>
+        </div>
         <div class="eyebrow">ACCOUNT</div>
         <h2 id="auth-title">로그인</h2>
-        <p id="auth-description">로그인하면 학습 기록이 이 계정에 저장돼요.</p>
+        <p id="auth-description">로그인해야 단원 학습·문제 풀이·모의고사·오답노트·교재 PDF를 이용할 수 있어요.</p>
+        <p class="auth-admin-notice" id="auth-admin-notice" hidden>가장 먼저 가입하는 계정이 관리자 권한을 갖습니다.</p>
         <form id="auth-form">
           <label class="auth-field"><span>아이디</span><input id="auth-id" name="id" autocomplete="username" placeholder="예: a" required /></label>
           <label class="auth-field"><span>비밀번호</span><input id="auth-password" name="password" type="password" autocomplete="current-password" placeholder="4자 이상" required /></label>
@@ -141,7 +168,7 @@
           <button class="button button-primary auth-submit" id="auth-submit" type="submit">로그인</button>
         </form>
         <button class="auth-switch" id="auth-switch" data-action="toggle-auth-mode">처음이에요 · 회원가입</button>
-        <small class="auth-note">이 버전은 브라우저 안에만 계정을 저장하는 학습용 방식이에요.</small>
+        <small class="auth-note">계정과 학습 기록은 이 서버의 데이터베이스에 저장됩니다. 비밀번호는 해시로만 보관돼요.</small>
       </section>
     </div>
 
